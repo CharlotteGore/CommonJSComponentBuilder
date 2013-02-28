@@ -1,0 +1,30 @@
+{
+  "name": "CustomComponentBuilder",
+  "description": "Custom Implementation of Component building",
+  "version": "0.0.1",
+  "author": {
+    "name": "Charlotte Gore",
+    "email": "conspiracygore@gmail.com"
+  },
+  "keywords": [
+    "component/component",
+    "builder",
+    "installer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CharlotteGore/RubbishComponentBuilder"
+  },
+  "main": "./commonjs-build.js",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "batch": "*",
+    "mkdirp": "*",
+    "debug": "*",
+    "commander": "*",
+    "component-builder" : "*",
+    "superagent" : "*"
+  }
+}

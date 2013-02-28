@@ -150,4 +150,6 @@ $RECYCLE.BIN/
 #NCrunch
 _NCrunch*
 
+js/node_modules
+
 
