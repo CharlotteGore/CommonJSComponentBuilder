@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "charlottegore/bezier": "*",
+    "component/jquery": "*",
+    "charlottegore/draggy": "*",
+    "component/raf": "*",
+    "charlottegore/easing" : "*"
+  },
+  "scripts": [
+    "entry.js"
+  ]
+}

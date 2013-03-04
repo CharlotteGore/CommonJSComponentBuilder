@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CommonJsBuild</id>
+    <version>1.0.0.0</version>
+    <title>Component/Component support for msbuild</title>
+    <authors>Ryan Roberts, Charlotte Gore</authors>
+    <owners>Ryan Roberts, Charlotte Gore</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Description to be added</description>
+    <copyright>Copyright 2013</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="Install.ps1" target="Tools"/>
+    <file src="Uninstall.ps1" target="Tools"/>
+  </files>
+</package>
