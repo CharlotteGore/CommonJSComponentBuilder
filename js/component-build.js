@@ -98,8 +98,8 @@ builder.build(function(err, obj){
 
     conf.scripts.forEach(function(name){
 
-      debug += "\nrequire('undefined/" + name + "')\n"
-      js += "\nrequire('undefined/" + name + "')\n"
+      debug += "\nrequire('" + conf.name + "/" + name + "')\n"
+      js += "\nrequire('" + conf.name + "/" + name + "')\n"
 
     })
 
