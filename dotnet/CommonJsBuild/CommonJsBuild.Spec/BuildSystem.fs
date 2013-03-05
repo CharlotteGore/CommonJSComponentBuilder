@@ -7,7 +7,7 @@ open System.Reflection
 
 
 let buildDir = (Directory.GetParent(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))).Parent.FullName
-let (success,arguments,stdout,stderr) = (Builder.buildModules buildDir) |> Array.toList |> List.head
+let (success,arguments,stdout,stderr) = (Builder.buildModules {baseDir=buildDir;outputDir="public/javascripts"}) |> Array.toList |> List.head
 
 printf "%s" stdout
 

@@ -73,30 +73,37 @@ module Builder =
     let shittyRel (path:string) baseDir =
         path.Replace (baseDir + "\\","")
 
-    let build baseDir (comp:FileInfo) = 
+    let build baseDir outputPath (comp:FileInfo) = 
         async{
             return Environment.runNode (sprintf
-                "%s/commonjs-build/commonjs-build.js -e %s -o public/javascripts -n %s -f" 
+                "%s/commonjs-build/commonjs-build.js -e %s -o %s -n %s -f" 
                     Environment.buildDir 
                     (shittyRel comp.Directory.FullName baseDir) 
+                    outputPath
                     comp.Directory.Name
                 ) baseDir
         }
 
-    let buildModules path =
-        (DirectoryInfo path).GetFiles("component.json",SearchOption.AllDirectories)
+    type buildConfig = {baseDir:string;outputDir:string}
+    let buildModules (buildConfig:buildConfig) =
+        (DirectoryInfo buildConfig.baseDir).GetFiles("entry.js",SearchOption.AllDirectories)
             |> Array.toSeq
-            |> Seq.map (build path)
+            |> Seq.map (build buildConfig.baseDir buildConfig.outputDir)
             |> Async.Parallel 
             |> Async.RunSynchronously
 
 open Microsoft.Build.Framework
 type MsBuildTask () =
     inherit Microsoft.Build.Utilities.Task ()
+    let mutable outputDir = "public/javascripts"
     let mutable baseDir = System.IO.Path.GetDirectoryName((System.Reflection.Assembly.GetExecutingAssembly().Location))
     member this.BaseDirectory
         with get () = baseDir
         and set (value) = baseDir <- value
+    member this.OutputDirectory
+        with get () = outputDir
+        and set (value) = outputDir <- value
+
 
     override this.Execute () =
         let allsuccess = ref true
@@ -108,7 +115,7 @@ type MsBuildTask () =
                 allsuccess := false
                 this.Log.LogError stderr
 
-        for (success,args,stdout,stderr) in (Builder.buildModules baseDir) do
+        for (success,args,stdout,stderr) in (Builder.buildModules {baseDir=baseDir;outputDir=outputDir}) do
             log success stdout stderr
 
         allsuccess.Value
