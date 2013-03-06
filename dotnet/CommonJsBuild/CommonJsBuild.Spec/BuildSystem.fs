@@ -9,9 +9,6 @@ open System.Reflection
 let buildDir = (Directory.GetParent(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))).Parent.FullName
 let (success,arguments,stdout,stderr) = (Builder.buildModules {baseDir=buildDir;outputDir="public/javascripts"}) |> Array.toList |> List.head
 
-printf "%s" stdout
-
-
 [<Fact>]
 let ``Build uses relative path to source of module`` ()=
     test <@ arguments.Contains "-e commonjs\\test" @>

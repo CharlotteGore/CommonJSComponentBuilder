@@ -3,6 +3,6 @@
   <UsingTask TaskName="CommonJsBuild.MsBuildTask"
              AssemblyFile="bin\CommonJsBuild.dll" />
   <Target Name="ValidateSite">
-    <CommonJsBuild.MsBuildTask BaseDirectory="$(ProjectDir)" />
+    <CommonJsBuild.MsBuildTask BaseDirectory="$(ProjectDir)" OutputDirectory="Content/javascripts" />
   </Target>
 </Project>
