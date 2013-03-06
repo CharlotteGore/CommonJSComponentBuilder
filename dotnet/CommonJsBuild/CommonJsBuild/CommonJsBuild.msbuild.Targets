@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask TaskName="CommonJsBuild.MsBuildTask"
              AssemblyFile="bin\CommonJsBuild.dll" />
-  <Target Name="ValidateSite">
+  <Target Name="BuildCommonJs" BeforeTargets="Build">
     <CommonJsBuild.MsBuildTask BaseDirectory="$(ProjectDir)" OutputDirectory="Content/javascripts" />
   </Target>
 </Project>

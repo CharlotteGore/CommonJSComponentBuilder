@@ -5,6 +5,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CommonJsBuild", "CommonJsBu
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CommonJsBuild.Spec", "CommonJsBuild.Spec\CommonJsBuild.Spec.fsproj", "{B5C4CC62-7981-4EE4-BE8A-0DED839705CD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3BFE22BA-73A4-44DF-878F-9E9D9EE3FE8F}"
+	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
