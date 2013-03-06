@@ -152,4 +152,5 @@ _NCrunch*
 
 js/node_modules
 
+*.nupkg
 
