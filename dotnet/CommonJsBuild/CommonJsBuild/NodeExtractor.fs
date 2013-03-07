@@ -107,7 +107,10 @@ type MsBuildTask () =
     override this.Execute () =
         let allsuccess = ref true
 
+        this.Log.LogMessage (sprintf "Building component js from %s to %s" baseDir outputDir)
+
         let log success stdout stderr = 
+            
             match success with
             | true -> this.Log.LogMessage stdout
             | false -> 
@@ -115,6 +118,7 @@ type MsBuildTask () =
                 this.Log.LogError stderr
 
         for (success,args,stdout,stderr) in (Builder.buildModules {baseDir=baseDir;outputDir=outputDir}) do
+            this.Log.LogMessage (sprintf "Attempting to build components using %s" args)
             log success stdout stderr
 
         allsuccess.Value
