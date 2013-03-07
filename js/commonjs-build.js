@@ -62,14 +62,13 @@ var mainBuild = function(){
 
 				error(' failed', program.name + ".js not built");
 				console.log('Not done');
-				process.exit(1);
 
 			}else{
 
 				log(" built" ,program.name + ".js")
 				log(" built" ,program.name + ".debug.js")
 				console.log('All Done');
-				process.exit(0);
+
 
 			}
 
@@ -121,7 +120,7 @@ fs.stat( path.join(dir, '.doNotInstallAndBuildDependencies'), function(err, stat
 
 			proc.on('exit', function(){
 
-				setTimeout(mainBuild, 1000);
+				mainBuild();
 
 				console.log("Building local components in /local");
 				var root = path.join(dir, '/local');
