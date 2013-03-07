@@ -10,11 +10,11 @@ module Environment =
     open Ionic.Zip
 
     let (inner, outer, unpacked) = ("","",false)
-    let baseDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly().Location)
+    let baseDir = Path.GetDirectoryName (System.Uri.UnescapeDataString(System.UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path))
     let extractTo = Path.Combine (baseDir,"__commonjs_build")
     let buildDir = Path.Combine(extractTo,"build")
     let nodePath = Path.Combine(extractTo,"node.exe")
-
+    
     let resource name =
         let manager = new ResourceManager("Properties.Resources",Assembly.GetExecutingAssembly()) 
         manager.GetStream(name)
