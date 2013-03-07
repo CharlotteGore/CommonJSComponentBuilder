@@ -10,11 +10,11 @@ module Environment =
     open Ionic.Zip
 
     let (inner, outer, unpacked) = ("","",false)
-    let baseDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly().Location)
+    let baseDir = Path.GetDirectoryName (System.Uri.UnescapeDataString(System.UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path))
     let extractTo = Path.Combine (baseDir,"__commonjs_build")
     let buildDir = Path.Combine(extractTo,"build")
     let nodePath = Path.Combine(extractTo,"node.exe")
-
+    
     let resource name =
         let manager = new ResourceManager("Properties.Resources",Assembly.GetExecutingAssembly()) 
         manager.GetStream(name)
@@ -75,7 +75,7 @@ module Builder =
     let build baseDir outputPath (comp:FileInfo) = 
         async{
             return Environment.runNode (sprintf
-                "%s/commonjs-build/commonjs-build.js -e %s -o %s -n %s -f" 
+                "%s/commonjs-build.js -e %s -o %s -n %s -f" 
                     Environment.buildDir 
                     (shittyRel comp.Directory.FullName baseDir) 
                     outputPath
@@ -107,7 +107,10 @@ type MsBuildTask () =
     override this.Execute () =
         let allsuccess = ref true
 
+        this.Log.LogMessage (sprintf "Building component js from %s to %s" baseDir outputDir)
+
         let log success stdout stderr = 
+            
             match success with
             | true -> this.Log.LogMessage stdout
             | false -> 
@@ -115,6 +118,7 @@ type MsBuildTask () =
                 this.Log.LogError stderr
 
         for (success,args,stdout,stderr) in (Builder.buildModules {baseDir=baseDir;outputDir=outputDir}) do
+            this.Log.LogMessage (sprintf "Attempting to build components using %s" args)
             log success stdout stderr
 
         allsuccess.Value

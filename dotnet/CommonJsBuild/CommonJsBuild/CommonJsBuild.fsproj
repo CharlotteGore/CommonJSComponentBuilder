@@ -44,7 +44,9 @@
     <EmbeddedResource Include="Properties/Resources.resx" />
     <None Include="commonjs-build.zip" />
     <None Include="node.exe" />
-    <None Include="CommonJsBuild.msbuild.Targets" />
+    <Content Include="CommonJsBuild.msbuild.Targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Install.ps1" />
     <None Include="Uninstall.ps1" />
     <None Include="CommonJsBuild.nuspec" />
