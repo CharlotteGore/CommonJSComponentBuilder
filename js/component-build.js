@@ -56,7 +56,6 @@ var cssPath = path.join(program.out, program.name + '.css');
 // mkdir -p
 
 mkdir.sync(program.out);
-
 // build
 
 var builder = new Builder( process.cwd() );
