@@ -9,9 +9,10 @@
     <OutputType>Library</OutputType>
     <RootNamespace>CommonJsBuild.Spec</RootNamespace>
     <AssemblyName>CommonJsBuild.Spec</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Name>CommonJsBuild.Spec</Name>
-   </PropertyGroup>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
