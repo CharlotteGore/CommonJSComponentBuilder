@@ -75,7 +75,7 @@ module Builder =
     let build baseDir outputPath (comp:FileInfo) = 
         async{
             return Environment.runNode (sprintf
-                "%s/commonjs-build/commonjs-build.js -e %s -o %s -n %s -f" 
+                "%s/commonjs-build.js -e %s -o %s -n %s -f" 
                     Environment.buildDir 
                     (shittyRel comp.Directory.FullName baseDir) 
                     outputPath
