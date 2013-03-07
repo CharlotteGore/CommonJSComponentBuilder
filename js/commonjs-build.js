@@ -25,6 +25,7 @@ try{
 
 	var conf = require( path.join(dir, 'component.json') );
 
+
 }catch(e){
 
 	throw new Error("component.json not found in build target!");
@@ -51,7 +52,6 @@ var mainBuild = function(){
 		console.log(''+data);
 
 	})
-
 	build.on('exit', function(){
 
 		log( ' validating', path.join(program.output, program.name + ".js") )
@@ -103,13 +103,10 @@ fs.stat( path.join(dir, '.doNotInstallAndBuildDependencies'), function(err, stat
 	// only build if build dependencies is true. 
 	if(installAndBuildDependencies === true){
 
-		if(conf.dependencies && !isEmptyObject(conf.dependencies)){
-
-			//log("install process", process.execPath + " " + path.resolve(dir, path.relative(dir, path.resolve(path.join(__dirname, 'node_modules/component/bin/component-install')))  ));
-			//log("install cwd", dir)
+			console.log('spooling up install process');
 
 			var proc = spawn(process.execPath, [ path.resolve(dir, path.relative(dir, path.resolve(path.join(__dirname, 'node_modules/component/bin/component-install'))))], { cwd : dir});
-			/*
+
 			proc.stdout.on('data', function( data ){
 
 				console.log('' + data);
@@ -120,40 +117,47 @@ fs.stat( path.join(dir, '.doNotInstallAndBuildDependencies'), function(err, stat
 				console.log('' + data);
 
 			})
-			*/
+			
 
 			proc.on('exit', function(){
 
 				setTimeout(mainBuild, 1000);
 
-				fs.readdir( path.join(dir, '/components'), function(err, files){
+				console.log("Building local components in /local");
+				var root = path.join(dir, '/local');
+
+				fs.readdir( root, function(err, files){
 
 					if(!err){
 
 						files.forEach(function(file){
 
-							fs.stat( path.join(dir, '/components', file), function(err, stat){
+							fs.stat( path.join(root, file), function(err, stat){
 
 								if(stat.isDirectory()){
 
-									var comconf = require( path.join(dir, '/components', file, '/component.json') );
+									var comconf = require( path.join(root, file, '/component.json') );
 
 									if(comconf.dependencies && !isEmptyObject(comconf.dependencies)){
 
 										log(' install', file)
-										var modDir = path.join( dir, '/components', file);
+										var modDir = path.join( root, file);
 										var proc = spawn(process.execPath, [ path.resolve(modDir, path.relative(modDir, path.join(__dirname, '/node_modules/component/bin/component'))) , 'install'], { cwd : modDir });
 										proc.on('exit', function(){
 
 											//log("build", file);
-											var depbuild = spawn(process.execPath, [__dirname + '/component-build', '-t'], { cwd : path.join(dir, '/components', file) });
+											var depbuild = spawn(process.execPath, [__dirname + '/component-build', '-t'], { cwd : path.join(root, file) });
 											
 											depbuild.stdout.on('data', function(data){
 
 												console.log('' + data);
 
 											});
-											
+											depbuild.stderr.on('data', function(data){
+
+												console.log('' + data);
+
+											});										
 											depbuild.on('exit', function(){
 
 												log(" complete", file);
@@ -166,13 +170,18 @@ fs.stat( path.join(dir, '.doNotInstallAndBuildDependencies'), function(err, stat
 									} else {
 
 									
-										var depbuild = spawn(process.execPath, [__dirname + '/component-build', '-t'], { cwd : path.join(dir, '/components', file) });
+										var depbuild = spawn(process.execPath, [__dirname + '/component-build', '-t'], { cwd : path.join(root, file) });
 										
 											depbuild.stdout.on('data', function(data){
 
 												console.log('' + data);
 
 											});
+											depbuild.stderr.on('data', function(data){
+
+												console.log('' + data);
+
+											});	
 										
 										depbuild.on('exit', function(){
 
@@ -199,8 +208,6 @@ fs.stat( path.join(dir, '.doNotInstallAndBuildDependencies'), function(err, stat
 			});
 
 
-
-		}
 
 	} else {
 
