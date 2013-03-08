@@ -109,10 +109,10 @@ builder.build(function(err, obj){
   if (css) fs.writeFile(cssPath, css);
   // js
   if(!program.testOnly){
-    log(" writing ", jsPath);
+    log("Writing ", jsPath);
     fs.writeFile(jsPath, js);
   }
-  log(" writing ", debugPath);
+  log("Writing ", debugPath);
   fs.writeFile(debugPath, debug);
 
   if (!program.verbose) return;
