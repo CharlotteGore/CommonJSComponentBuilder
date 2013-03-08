@@ -355,6 +355,19 @@ Builder.prototype = {
 
 		gathering.createInvitation(function(accept, decline){
 
+			self.conf.scripts.forEach(function(script){
+
+				console.log( path.relative(self.entry, path.join(self.entry, script) ));
+
+			});
+
+			accept();
+
+		});
+
+
+		gathering.createInvitation(function(accept, decline){
+
 			fs.readdir( components, function(err, modules){
 
 				if(!err){
