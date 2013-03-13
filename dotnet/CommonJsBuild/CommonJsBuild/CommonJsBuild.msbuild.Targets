@@ -1,8 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="CommonJsBuild.MsBuildTask"
+  <PropertyGroup>
+      <JsBaseDir>$(ProjectDir)</JsBaseDir>
+      <JsOutputDir>Content/javascripts</JsOutputDir>
+  </PropertyGroup>
+  <UsingTask TaskName="CommonJsBuild.Build"
              AssemblyFile="bin\CommonJsBuild.dll" />
+  <UsingTask TaskName="CommonJsBuild.Inventory"
+            AssemblyFile="bin\CommonJsBuild.dll" />
   <Target Name="BuildCommonJs" AfterTargets="Build">
-    <CommonJsBuild.MsBuildTask BaseDirectory="$(ProjectDir)" OutputDirectory="Content/javascripts" />
+    <CommonJsBuild.Build BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
+    <CommonJsBuild.Inventory BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
+  </Target>
+
+  <UsingTask TaskName="CommonJsBuild.Clean"
+           AssemblyFile="bin\CommonJsBuild.dll" />
+  <Target Name="CleanCommonJs" AfterTargets="Clean">
+    <CommonJsBuild.Clean BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
   </Target>
 </Project>

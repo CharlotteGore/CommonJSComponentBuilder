@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <!--Include a default reference to the correct FSharp.Core assembly-->
+  <ItemGroup>
+	  <Reference Include="FSharp.Core">
+		  <HintPath>$(SolutionDir)..\fsharp\FSharp.Core.dll</HintPath>
+	  </Reference>
+  </ItemGroup>
+  
+  <!--Override the Path to the FSharp Compiler to point to our tool dir-->
+  <PropertyGroup>
+	<FscToolPath>$(SolutionDir)..\tools\fsharp\</FscToolPath>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)..\tools\fsharp\Microsoft.FSharp.Targets" />
+  
+</Project>

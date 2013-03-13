@@ -50,7 +50,9 @@ module Environment =
             p.BeginErrorReadLine()
             p.BeginOutputReadLine()
             p.WaitForExit() 
-            p.ExitCode
+            let res = p.ExitCode
+            p.Dispose()
+            res
 
         (invoke(),output.ToString(),error.ToString())
 
@@ -75,7 +77,7 @@ module Builder =
     let build baseDir outputPath (comp:FileInfo) = 
         async{
             return Environment.runNode (sprintf
-                "%s/commonjs-build.js -e %s -o %s -n %s -f" 
+                "%s/commonjs-build.js -e %s -o %s -n %s" 
                     Environment.buildDir 
                     (shittyRel comp.Directory.FullName baseDir) 
                     outputPath
@@ -83,16 +85,87 @@ module Builder =
                 ) baseDir
         }
 
+    let clean baseDir (comp:FileInfo) = 
+        async{
+            return Environment.runNode (sprintf
+                "%s/commonjs-build.js -e %s -c" 
+                    Environment.buildDir 
+                    (shittyRel comp.Directory.FullName baseDir) 
+                ) baseDir
+        }
+
+    let inventory baseDir (comp:FileInfo) = 
+        async{
+            return Environment.runNode (sprintf
+                "%s/commonjs-build.js -e %s -i" 
+                    Environment.buildDir 
+                    (shittyRel comp.Directory.FullName baseDir) 
+                ) baseDir
+        }
+
+    let private files baseDir action = 
+        (DirectoryInfo baseDir).GetFiles("entry.js",SearchOption.AllDirectories)
+        |> Array.toSeq
+        |> Seq.map action
+        |> Async.Parallel 
+        |> Async.RunSynchronously
+
     type buildConfig = {baseDir:string;outputDir:string}
-    let buildModules (buildConfig:buildConfig) =
-        (DirectoryInfo buildConfig.baseDir).GetFiles("entry.js",SearchOption.AllDirectories)
-            |> Array.toSeq
-            |> Seq.map (build buildConfig.baseDir buildConfig.outputDir)
-            |> Async.Parallel 
-            |> Async.RunSynchronously
+
+    let buildModules (buildConfig:buildConfig) = 
+        files buildConfig.baseDir (build buildConfig.baseDir buildConfig.outputDir)
+
+    let cleanModules (buildConfig:buildConfig) = 
+        files buildConfig.baseDir (clean buildConfig.baseDir)
+
+    let inventoryOfModules (buildConfig:buildConfig) =
+        files buildConfig.baseDir (inventory buildConfig.baseDir)
+
+    let logBuild builder logMessage logError baseDir outputDir = 
+        let allsuccess = ref true
+
+        logMessage (sprintf "Building component js from %s to %s" baseDir outputDir)
+
+        let log success stdout stderr =   
+            match success with
+            | true -> logMessage stdout
+            | false -> 
+                allsuccess := false
+                logError stderr
+
+        for (success,args,stdout,stderr) in (builder {baseDir=baseDir;outputDir=outputDir}) do
+            logMessage (sprintf "Attempting to build components using %s" args)
+            log success stdout stderr
+
+        allsuccess.Value
+
+    let gatherInventory builder logMessage logError baseDir outputDir =
+        let allsuccess = ref true
+
+        logMessage (sprintf "Getting component js from %s" baseDir)
+
+        use referenceFile = File.Open (Path.Combine (outputDir,"_references.js"),
+                                        FileMode.Truncate ||| FileMode.Append,
+                                        FileAccess.Write)
+        
+        use writer = new StreamWriter (referenceFile)
+
+
+        let appendReferences (stdout:string) = 
+            for line in stdout.Split('\r') do
+                writer.WriteLine (sprintf "//<Reference source=\"%s\"/>" line)
+            
+
+        for (success,args,stdout,stderr) in (builder {baseDir=baseDir;outputDir=outputDir}) do
+            if (success) then appendReferences stdout
+                            
+
+        allsuccess.Value
 
 open Microsoft.Build.Framework
-type MsBuildTask () =
+
+
+type Build () = 
     inherit Microsoft.Build.Utilities.Task ()
     let mutable outputDir = "public/javascripts"
     let mutable baseDir = System.IO.Path.GetDirectoryName((System.Reflection.Assembly.GetExecutingAssembly().Location))
@@ -103,22 +176,46 @@ type MsBuildTask () =
         with get () = outputDir
         and set (value) = outputDir <- value
 
+    override this.Execute () = Builder.logBuild 
+                                    Builder.buildModules 
+                                    this.Log.LogMessage 
+                                    this.Log.LogError 
+                                    this.BaseDirectory 
+                                    this.OutputDirectory
 
-    override this.Execute () =
-        let allsuccess = ref true
+type Clean () = 
+    inherit Microsoft.Build.Utilities.Task ()
+    let mutable outputDir = "public/javascripts"
+    let mutable baseDir = System.IO.Path.GetDirectoryName((System.Reflection.Assembly.GetExecutingAssembly().Location))
+    member this.BaseDirectory
+        with get () = baseDir
+        and set (value) = baseDir <- value
+    member this.OutputDirectory
+        with get () = outputDir
+        and set (value) = outputDir <- value
 
-        this.Log.LogMessage (sprintf "Building component js from %s to %s" baseDir outputDir)
+    override this.Execute () = Builder.logBuild 
+                                    Builder.buildModules 
+                                    this.Log.LogMessage 
+                                    this.Log.LogError 
+                                    this.BaseDirectory 
+                                    this.OutputDirectory
 
-        let log success stdout stderr = 
-            
-            match success with
-            | true -> this.Log.LogMessage stdout
-            | false -> 
-                allsuccess := false
-                this.Log.LogError stderr
+type Inventory () = 
+    inherit Microsoft.Build.Utilities.Task ()
+    let mutable outputDir = "public/javascripts"
+    let mutable baseDir = System.IO.Path.GetDirectoryName((System.Reflection.Assembly.GetExecutingAssembly().Location))
+    member this.BaseDirectory
+        with get () = baseDir
+        and set (value) = baseDir <- value
+    member this.OutputDirectory
+        with get () = outputDir
+        and set (value) = outputDir <- value
 
-        for (success,args,stdout,stderr) in (Builder.buildModules {baseDir=baseDir;outputDir=outputDir}) do
-            this.Log.LogMessage (sprintf "Attempting to build components using %s" args)
-            log success stdout stderr
-
-        allsuccess.Value
+    override this.Execute () = Builder.logBuild 
+                                    Builder.buildModules 
+                                    this.Log.LogMessage 
+                                    this.Log.LogError 
+                                    this.BaseDirectory 
+                                    this.OutputDirectory
+        
