@@ -38,4 +38,3 @@ let ``Has created output js`` ()=
 [<Fact>]
 let ``Has created debug js`` ()=
     test <@ File.Exists (Path.Combine (buildDir,"public/javascripts/test.debug.js"))@>
-
