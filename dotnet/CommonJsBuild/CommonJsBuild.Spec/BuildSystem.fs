@@ -38,3 +38,23 @@ let ``Has created output js`` ()=
 [<Fact>]
 let ``Has created debug js`` ()=
     test <@ File.Exists (Path.Combine (buildDir,"public/javascripts/test.debug.js"))@>
+
+let (inventoryResult,_,_,_) = (Builder.inventoryOfModules {baseDir=buildDir;outputDir=buildDir}) |> Array.toList |> List.head
+
+[<Fact>]
+let ``Reference exited clean`` ()=
+    test <@ inventoryResult @>
+
+[<Fact>]
+let ``Has created reference js`` ()=
+    test <@ File.Exists (Path.Combine (buildDir,"_references.js"))@>
+
+let (cleanResult,_,_,_) = (Builder.cleanModules {baseDir=buildDir;outputDir=buildDir}) |> Array.toList |> List.head
+
+[<Fact>]
+let ``Clean exited clean`` ()=
+    test <@ cleanResult @>
+
+[<Fact>]
+let ``Has cleaned`` ()=
+    test <@ not (File.Exists (Path.Combine (buildDir,"commonjs\\test\\Modules")))@>

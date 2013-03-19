@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CommonJsBuild</id>
-    <version>1.0.0.8</version>
+    <version>1.0.0.9</version>
     <title>Component/Component support for msbuild</title>
     <authors>Ryan Roberts, Charlotte Gore</authors>
     <owners>Ryan Roberts, Charlotte Gore</owners>

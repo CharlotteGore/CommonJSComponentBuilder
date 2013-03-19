@@ -4,7 +4,7 @@
   <!--Include a default reference to the correct FSharp.Core assembly-->
   <ItemGroup>
 	  <Reference Include="FSharp.Core">
-		  <HintPath>$(SolutionDir)..\fsharp\FSharp.Core.dll</HintPath>
+		  <HintPath>$(SolutionDir)..\tools\fsharp\FSharp.Core.dll</HintPath>
 	  </Reference>
   </ItemGroup>
   
@@ -12,6 +12,6 @@
   <PropertyGroup>
 	<FscToolPath>$(SolutionDir)..\tools\fsharp\</FscToolPath>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)..\tools\fsharp\Microsoft.FSharp.Targets" />
+  <Import Project="$(ProjectDir)..\..\tools\fsharp\Microsoft.FSharp.Targets" />
   
 </Project>
