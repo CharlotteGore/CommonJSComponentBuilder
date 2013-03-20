@@ -9,13 +9,13 @@
   <UsingTask TaskName="CommonJsBuild.Inventory"
             AssemblyFile="bin\CommonJsBuild.dll" />
   <Target Name="BuildCommonJs" AfterTargets="Build">
-    <CommonJsBuild.Build BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
-    <CommonJsBuild.Inventory BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
+    <CommonJsBuild.Build BaseDirectory="$(JsBaseDir)" OutputDirectory="$(JsOutputDir)" />
+    <CommonJsBuild.Inventory BaseDirectory="$(JsBaseDir)" OutputDirectory="$(JsOutputDir)" />
   </Target>
 
   <UsingTask TaskName="CommonJsBuild.Clean"
            AssemblyFile="bin\CommonJsBuild.dll" />
   <Target Name="CleanCommonJs" AfterTargets="Clean">
-    <CommonJsBuild.Clean BaseDirectory="$(JsBaseDir)" OutputDirectory="${JsOutputDir}" />
+    <CommonJsBuild.Clean BaseDirectory="$(JsBaseDir)" OutputDirectory="$()JsOutputDir)" />
   </Target>
 </Project>

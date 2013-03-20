@@ -195,7 +195,7 @@ type Clean () =
         and set (value) = outputDir <- value
 
     override this.Execute () = Builder.logBuild 
-                                    Builder.buildModules 
+                                    Builder.cleanModules 
                                     this.Log.LogMessage 
                                     this.Log.LogError 
                                     this.BaseDirectory 
@@ -213,7 +213,7 @@ type Inventory () =
         and set (value) = outputDir <- value
 
     override this.Execute () = Builder.logBuild 
-                                    Builder.buildModules 
+                                    Builder.inventoryOfModules 
                                     this.Log.LogMessage 
                                     this.Log.LogError 
                                     this.BaseDirectory 
