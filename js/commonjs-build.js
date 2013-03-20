@@ -110,8 +110,6 @@ var Builder = function(){
 
 							if(err){
 
-								console.log("Build failed");
-								console.log("Build failed");
 								fatal('Build failed');
 
 							} else {
@@ -139,7 +137,7 @@ var Builder = function(){
 
 Builder.prototype = {
 
-	buildApplication : function( callback ){
+	buildApplication : function( callback, noreinstall ){
 
 		var self = this,
 			target = self.baseName + ".js";
@@ -164,7 +162,46 @@ Builder.prototype = {
 
 				} else {
 
-					callback("Failed");
+					if(!noreinstall){
+
+						rmdir( path.join( self.entry, "components") );
+
+						self.installApplicationDependencies(function( err ){
+
+							if(err){
+
+								callback("Build failed after attempting reinstall of dependencies")	
+															
+							} else {
+
+								self.buildApplication(function(err){
+
+									if(err){
+
+										callback("Build failed after successfully reinstalling dependencies");
+
+									} else {
+
+										callback();
+
+									}
+
+
+								}, "do not reinstall on error")
+
+							}
+
+
+						});
+
+
+					} else {
+
+						callback("Failed");
+
+					}
+
+					
 
 				}
 
@@ -317,7 +354,7 @@ Builder.prototype = {
 
 	},
 
-	buildLocalModule : function( folder,  callback ){
+	buildLocalModule : function( folder,  callback, norebuild ){
 
 		var self = this;
 
@@ -337,7 +374,42 @@ Builder.prototype = {
 
 				} else {
 
-					callback("Validation failed");
+					if(!norebuild){
+
+						// try reinstalling component...
+						rmdir( path.join(folder, 'components') );
+
+						self.installLocalModule(folder, function( err ){
+
+							if(!err){
+
+								self.buildLocalModule( folder, function(){
+
+									if(err){
+
+										log('failed to build after attempted reinstall: ', folder);
+
+									} else {
+
+										callback();
+
+									}
+
+
+								}, 'do not reinstall on error')
+								
+							}
+
+
+						})
+
+					
+
+					} else {
+
+						log('failed to build', folder);
+
+					}
 
 				}
 
